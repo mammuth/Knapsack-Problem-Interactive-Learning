@@ -1,0 +1,313 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Knapsack Problem Visual Tool</title>
+	<meta name="description" content="Visualisation of the Knapsack Problem.">
+	<meta name="author" content="Maximilian Muth">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="css/normalize.css">
+	<link rel="stylesheet" href="css/skeleton.css">
+	<link rel="stylesheet" href="css/tabs.css">
+	<link rel="icon" type="image/png" href="images/favicon.png">
+
+
+	<style>
+		#backpack {width:350px; max-width: 95%; height:300px;padding:10px;border:1px solid #aaaaaa; overflow: auto;}
+		.full-width-container {
+			padding-left: 30px;
+			padding-right: 30px;
+			width: 100%;
+			max-width: 100%;
+			clear: both;
+			margin: 0 auto;
+		}
+		
+	</style>
+
+</head>
+
+<body onload="generateElements()">
+
+
+	<div class="full-width-container">
+		<div class="row">
+			<h1 style="margin-top: 20px">Pack your Knapsack!</h1>
+			<hr>
+			<p>Drag items from the right into your backpack. Your goal is to maximize the total value, whilst not exceeding the maximal weight of your backpack.</p>
+		</div>
+		<br>
+		<div class="row">
+
+			<!-- Left Column -->
+			<div class="one-half column">
+				<!-- Backpack container -->
+				<h3>Your current Backpack</h3>
+				<div id="backpack" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+				<br>
+
+				<!-- Counter of current Value and Weight-->
+				<div id="counter">
+					<div class="row">
+						<div class="one-half column">
+							<h4>Weight:</h4>
+						</div>
+						<div class="one-half column">
+							<h4>Value:</h4>
+						</div>
+					</div>
+					<div class="row">
+						<div class="one-half column">
+							<p style="font-size:large;" id="weightCounter">0</p>
+						</div>
+						<div class="one-half column">
+							<p style="font-size: large;" id="valueCounter">0</p>
+						</div>
+					</div>
+
+
+
+					<!-- Max Weight -->
+					<h4>Backpack maximal Weight:</h4>
+					<input id="maxWeight"type="number" name="maxWeight" value="15"></input>
+
+					<!-- Restart Button -->
+					<!-- <br><button onclick="location.reload();">Retry</button> -->
+				</div>
+			</div>
+
+
+			<!-- 
+			-- 
+			-- Right Column 
+			--
+		-->
+		<div class="one-half column">
+
+
+			<ul class="tabs">
+				<li><a class="active" href="#interactive">Interactive Tool</a></li>
+				<li><a href="#Solver">Solver</a></li>		
+			</ul>
+
+			<!-- Tab Content -->
+			<ul class="tabs-content">
+				<!-- Interactive Tool -->
+				<li class="active" id="interactive">
+					<div id="elementHolder">
+						<h3>Items you can pack</h3>
+						<br>
+						<!-- Elements get generated here on page load -->
+					</div>
+					<button onclick="generateElements()">Gimme' More Items!</button>
+				</li>
+				<!-- Ende interactive Tab -->
+
+					<!-- 
+					--
+					--Solver Tab 
+					---
+				-->
+				<li style="list-style-type: none;" id="Solver">
+
+					<div class="row">
+						<div class="one-half column">
+							<h4>max. copies:</h4>
+							<input id="maxCopies" type="number" name="maxWeight" value="1"></input>	
+						</div>
+						<div class="one-half column">
+							<br>(Choose 1 for 0-1 Knapsack, and any value c for the bounded Knapsack Problem)
+						</div>		
+					</div>
+					<br><button onclick="solveKnapsack()">Solve Knapsack Problem</button>
+				</li>
+				<!-- Ende Solver -->
+
+			</ul>
+			<!-- Ende Tab Content -->
+
+		</div>
+	</div>
+
+
+</div>
+
+</body>
+
+
+
+
+<!-- 
+-
+-
+-JavaScript
+-
+-
+-->
+<script src="jquery.js"></script>
+<script src="knapsack.js"></script>
+<script src="tabs.js"></script>
+
+<script>
+
+	window.onload = onPageLoad();
+
+	function onPageLoad(){
+		generateElements();
+	}
+
+
+	function solveKnapsack() {
+		// This function collects the values the user entered, then calls the algorithm in the knapsack.js file and presents the result on this page
+
+		var items = {
+			item1: {
+				Id: "milk",
+				Weight: 6,
+				Value: 30
+			},
+			item2: {
+				Id: "map",
+				Weight: 3,
+				Value: 14
+			},
+			item3: {
+				Id: "tv",
+				Weight: 4,
+				Value: 16
+			},
+			item4: {
+				Id: "sandwich",
+				Weight: 2,
+				Value: 9
+			},
+			item5: {
+				Id: "minion",
+				Weight: 5,
+				Value: 24
+			}
+		}
+
+
+		var prev = {};
+		var maxWeight = parseInt(document.getElementById("maxWeight").value);
+		var knapsackResult = getKnapsackResult(items, prev, maxWeight);
+		var selectedItems = getSelectedItems(maxWeight, prev);
+
+		console.log('Max Value = ' + knapsackResult);
+		$.each(selectedItems, function(i, e){
+			console.log(i + ' : ' + e.Id);
+		});
+
+		// Pack items in backpack
+		var backpack = document.getElementById("backpack");
+		backpack.innerHTML = "";
+		$.each(selectedItems, function(i, e){
+			backpack.innerHTML += "<img id="+e.Id+i+"\" src=\"images/"+e.Id+".jpg\" height=\"75\">";
+		});
+
+		// Set weight and value counter
+		document.getElementById("valueCounter").innerHTML = knapsackResult;
+		document.getElementById("weightCounter").innerHTML = "";
+	}
+
+	function allowDrop(ev) {
+		ev.preventDefault();
+	}
+
+	function drag(ev, weight, value) {
+		ev.dataTransfer.setData("id", ev.target.id);
+		ev.dataTransfer.setData("weight", weight);
+		ev.dataTransfer.setData("value", value);
+
+	}
+
+	function drop(ev) {
+		ev.preventDefault();
+
+
+		var weight = ev.dataTransfer.getData("weight");
+		var value = ev.dataTransfer.getData("value");
+		var weightCounter = document.getElementById("weightCounter");
+		var valueCounter = document.getElementById("valueCounter");
+		var maxWeight = parseInt(document.getElementById("maxWeight").value);
+
+
+		console.log(maxWeight);
+
+		var newWeight = parseInt(weightCounter.innerHTML)+parseInt(weight);
+		if (newWeight <= maxWeight){
+			ev.target.appendChild(document.getElementById(ev.dataTransfer.getData("id")));
+			weightCounter.innerHTML = newWeight;
+			valueCounter.innerHTML = parseInt(valueCounter.innerHTML)+parseInt(value);
+		} else {
+			// Backpack is full
+			alert("Backpack is full with value = "+valueCounter.innerHTML);
+		}
+	}
+
+
+	// This function generates a couple copies of each item
+	function generateElements(){
+		var holder = document.getElementById('elementHolder');
+
+			// Milk			
+			var weight = 6;
+			var value = 30;			
+			for (var i = 0; i < 12; i++){
+				holder.innerHTML += "<img id=\"milk"+i+"\" src=\"images/milk.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
+
+			}
+			holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (Milk)</h5>";
+
+			// Map
+			weight = 3;
+			value = 14;
+			for (var i = 0; i < 5; i++){
+				holder.innerHTML += "<img id=\"Map"+i+"\" src=\"images/map.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
+
+			}
+
+			holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (Map)</h5>";
+			
+			// Tv
+			weight = 4;
+			value = 16;
+			for (var i = 0; i < 5; i++){
+				holder.innerHTML += "<img id=\"tv"+i+"\" src=\"images/tv.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
+
+			}
+			holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (TV)</h5>";
+
+			// Sandwich
+			weight = 2;
+			value = 9;
+			for (var i = 0; i < 6; i++){
+				holder.innerHTML += "<img id=\"sandwich"+i+"\" src=\"images/sandwich.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
+
+			}
+			holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (Sandwich)</h5>";
+
+			// Banana Minion
+			weight = 5;
+			value = 24;
+			for (var i = 0; i < 11; i++){
+				holder.innerHTML += "<img id=\"minion"+i+"\" src=\"images/minion.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
+
+			}
+			holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (Banana (plus Minion))</h5>";
+
+
+
+			console.log('Items generated');
+		}
+
+		
+
+
+
+	</script>
+
+	</html>
+	
