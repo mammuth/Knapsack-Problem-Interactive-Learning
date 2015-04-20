@@ -18,7 +18,6 @@
 		.full-width-container {
 			padding-left: 30px;
 			padding-right: 30px;
-			width: 95%;
 			max-width: 100%;
 			clear: both;
 			margin: 0 auto;
@@ -28,7 +27,7 @@
 
 </head>
 
-<body onload="generateElements()">
+<body>
 
 
 	<div class="full-width-container">
@@ -78,37 +77,35 @@
 			</div>
 
 
-			<!-- 
-			-- 
-			-- Right Column 
-			--
-		-->
-		<div class="one-half column">
+		<!-- 
+		-- 
+		-- Right Column 
+		--
+	-->
+	<div class="one-half column">
 
+		<ul class="tabs">
+			<li><a class="active" href="#interactive">Interactive Tool</a></li>
+			<li><a href="#Solver">Solver</a></li>		
+		</ul>
 
-			<ul class="tabs">
-				<li><a class="active" href="#interactive">Interactive Tool</a></li>
-				<li><a href="#Solver">Solver</a></li>		
-			</ul>
-
-			<!-- Tab Content -->
-			<ul class="tabs-content">
-				<!-- Interactive Tool -->
-				<li class="active" id="interactive">
-					<div id="elementHolder">
-						<h3>Items you can pack</h3>
-						<br>
-						<!-- Elements get generated here on page load -->
-					</div>
-					<button onclick="generateElements()">Gimme' More Items!</button>
-				</li>
-				<!-- Ende interactive Tab -->
+		<!-- Tab Content -->
+		<ul class="tabs-content">
+			<!-- Interactive Tool -->
+			<li class="active" id="interactive">
+				<div id="elementHolder">
+					<h3>Items you can pack</h3>
+					<br>
+					<!-- Elements get generated here on page load -->
+				</div>
+				<button onclick="generateElements()">Gimme' More Items!</button>
+			</li>
+			<!-- Ende interactive Tab -->
 
 					<!-- 
 					--
 					--Solver Tab 
-					---
-				-->
+					-->
 				<li style="list-style-type: none;" id="Solver">
 
 					<div class="row">
@@ -122,16 +119,16 @@
 					</div>
 					<br><button onclick="solveKnapsack()">Solve Knapsack Problem</button>
 				</li>
-				<!-- Ende Solver -->
+				<!-- End Solver -->
 
 			</ul>
-			<!-- Ende Tab Content -->
+			<!-- End Tab Content -->
 
 		</div>
 	</div>
 
 
-</div>
+</div> <!-- End Container Area-->
 
 </body>
 
@@ -149,165 +146,5 @@
 <script src="knapsack.js"></script>
 <script src="tabs.js"></script>
 
-<script>
 
-	window.onload = onPageLoad();
-
-	function onPageLoad(){
-		generateElements();
-	}
-
-
-	function solveKnapsack() {
-		// This function collects the values the user entered, then calls the algorithm in the knapsack.js file and presents the result on this page
-
-		var items = {
-			item1: {
-				Id: "milk",
-				Weight: 6,
-				Value: 30
-			},
-			item2: {
-				Id: "map",
-				Weight: 3,
-				Value: 14
-			},
-			item3: {
-				Id: "tv",
-				Weight: 4,
-				Value: 16
-			},
-			item4: {
-				Id: "sandwich",
-				Weight: 2,
-				Value: 9
-			},
-			item5: {
-				Id: "minion",
-				Weight: 5,
-				Value: 24
-			}
-		}
-
-
-		var prev = {};
-		var maxWeight = parseInt(document.getElementById("maxWeight").value);
-		var knapsackResult = getKnapsackResult(items, prev, maxWeight);
-		var selectedItems = getSelectedItems(maxWeight, prev);
-
-		console.log('Max Value = ' + knapsackResult);
-		$.each(selectedItems, function(i, e){
-			console.log(i + ' : ' + e.Id);
-		});
-
-		// Pack items in backpack
-		var backpack = document.getElementById("backpack");
-		backpack.innerHTML = "";
-		$.each(selectedItems, function(i, e){
-			backpack.innerHTML += "<img id="+e.Id+i+"\" src=\"images/"+e.Id+".jpg\" height=\"75\">";
-		});
-
-		// Set weight and value counter
-		document.getElementById("valueCounter").innerHTML = knapsackResult;
-		document.getElementById("weightCounter").innerHTML = "";
-	}
-
-	function allowDrop(ev) {
-		ev.preventDefault();
-	}
-
-	function drag(ev, weight, value) {
-		ev.dataTransfer.setData("id", ev.target.id);
-		ev.dataTransfer.setData("weight", weight);
-		ev.dataTransfer.setData("value", value);
-
-	}
-
-	function drop(ev) {
-		ev.preventDefault();
-
-
-		var weight = ev.dataTransfer.getData("weight");
-		var value = ev.dataTransfer.getData("value");
-		var weightCounter = document.getElementById("weightCounter");
-		var valueCounter = document.getElementById("valueCounter");
-		var maxWeight = parseInt(document.getElementById("maxWeight").value);
-
-
-		console.log(maxWeight);
-
-		var newWeight = parseInt(weightCounter.innerHTML)+parseInt(weight);
-		if (newWeight <= maxWeight){
-			ev.target.appendChild(document.getElementById(ev.dataTransfer.getData("id")));
-			weightCounter.innerHTML = newWeight;
-			valueCounter.innerHTML = parseInt(valueCounter.innerHTML)+parseInt(value);
-		} else {
-			// Backpack is full
-			alert("Backpack is full with value = "+valueCounter.innerHTML);
-		}
-	}
-
-
-	// This function generates a couple copies of each item
-	function generateElements(){
-		var holder = document.getElementById('elementHolder');
-
-			// Milk			
-			var weight = 6;
-			var value = 30;			
-			for (var i = 0; i < 12; i++){
-				holder.innerHTML += "<img id=\"milk"+i+"\" src=\"images/milk.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
-
-			}
-			holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (Milk)</h5>";
-
-			// Map
-			weight = 3;
-			value = 14;
-			for (var i = 0; i < 5; i++){
-				holder.innerHTML += "<img id=\"Map"+i+"\" src=\"images/map.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
-
-			}
-
-			holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (Map)</h5>";
-			
-			// Tv
-			weight = 4;
-			value = 16;
-			for (var i = 0; i < 5; i++){
-				holder.innerHTML += "<img id=\"tv"+i+"\" src=\"images/tv.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
-
-			}
-			holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (TV)</h5>";
-
-			// Sandwich
-			weight = 2;
-			value = 9;
-			for (var i = 0; i < 6; i++){
-				holder.innerHTML += "<img id=\"sandwich"+i+"\" src=\"images/sandwich.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
-
-			}
-			holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (Sandwich)</h5>";
-
-			// Banana Minion
-			weight = 5;
-			value = 24;
-			for (var i = 0; i < 11; i++){
-				holder.innerHTML += "<img id=\"minion"+i+"\" src=\"images/minion.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
-
-			}
-			holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (Banana (plus Minion))</h5>";
-
-
-
-			console.log('Items generated');
-		}
-
-		
-
-
-
-	</script>
-
-	</html>
-	
+</html>
