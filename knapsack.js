@@ -1,54 +1,48 @@
+var items = {
+	item1: {
+		Id: "milk",
+		Weight: 6,
+		Value: 30,
+		DefaultCopies: 12
+	},
+	item2: {
+		Id: "map",
+		Weight: 3,
+		Value: 14,
+		DefaultCopies: 5
+	},
+	item3: {
+		Id: "tv",
+		Weight: 4,
+		Value: 16,
+		DefaultCopies: 5
+	},
+	item4: {
+		Id: "sandwich",
+		Weight: 2,
+		Value: 9,
+		DefaultCopies: 6
+	},
+	item5: {
+		Id: "minion",
+		Weight: 5,
+		Value: 24,
+		DefaultCopies: 11
+	}
+}
+
 window.onload = generateElements();
 
 // This function generates a couple of copies of each item
 function generateElements(){
 	var holder = document.getElementById('elementHolder');
 
-	// Milk			
-	var weight = 6;
-	var value = 30;			
-	for (var i = 0; i < 12; i++){
-		holder.innerHTML += "<img id=\"milk"+i+"\" src=\"images/milk.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
-
-	}
-	holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (Milk)</h5>";
-
-	// Map
-	weight = 3;
-	value = 14;
-	for (var i = 0; i < 5; i++){
-		holder.innerHTML += "<img id=\"Map"+i+"\" src=\"images/map.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
-
-	}
-
-	holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (Map)</h5>";
-	
-	// Tv
-	weight = 4;
-	value = 16;
-	for (var i = 0; i < 5; i++){
-		holder.innerHTML += "<img id=\"tv"+i+"\" src=\"images/tv.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
-
-	}
-	holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (TV)</h5>";
-
-	// Sandwich
-	weight = 2;
-	value = 9;
-	for (var i = 0; i < 6; i++){
-		holder.innerHTML += "<img id=\"sandwich"+i+"\" src=\"images/sandwich.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
-
-	}
-	holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (Sandwich)</h5>";
-
-	// Banana Minion
-	weight = 5;
-	value = 24;
-	for (var i = 0; i < 11; i++){
-		holder.innerHTML += "<img id=\"minion"+i+"\" src=\"images/minion.jpg\" draggable=\"true\" ondragstart=\"drag(event,"+weight+","+value+")\" height=\"75\">";
-
-	}
-	holder.innerHTML += "<h5>Weight: "+weight+", Value: "+value+" (Banana (plus Minion))</h5>";
+	$.each(items, function(x, e){ 
+		for (var i = 0; i < e.DefaultCopies; i++){
+			holder.innerHTML += "<img id="+e.Id+i+"\" src=\"images/"+e.Id+".jpg\" draggable=\"true\" ondragstart=\"drag(event,"+e.Weight+","+e.Value+")\" height=\"75\">";
+		}
+		holder.innerHTML += "<h5>Weight: "+e.Weight+", Value: "+e.Value+" ("+e.Id+")</h5>";
+	});	
 
 	console.log('Items generated');
 }
