@@ -31,6 +31,7 @@ var items = {
 	}
 }
 
+
 window.onload = generateElements();
 
 // This function generates a couple of copies of each item
@@ -80,75 +81,23 @@ function drop(ev) {
 }
 
 
-// Algorithm-Gaudi
+/*
+* Algorithm-Gaudi
+*/
 
-// Algorithm to solve unbound Knapsack, using DynamicProgramming
-function getKnapsackResult(items, prev, maxWeight){
-	var K = new Array(maxWeight);
 
-	// Init array with zeros
-	$.each(K, function(i, e){
-		K[i] = 0
-	})
-
-	for (w = 1; w <= maxWeight; w++) {
-		var maxVal = 0; // (current) maximal value you get with capacity w
-
-		// Loop over all avaiable items
-		$.each(items, function(x, e){ 
-			var wi = e.Weight; // get weight and value of the current item e
-			var vi = e.Value;
-			
-			if (wi <= w) {
-				val = K[w - wi] + vi // nehme das 
-				if (val > maxVal) {
-					maxVal = val;
-
-					prev[w] = e;
-				}
-			}
-		})
-		K[w] = maxVal;  // we save this element e, that maximizes K[w-wi]+vi for the current weight w
-		console.log(K);
-	}
-	return K[maxWeight] // return the last element of the array → thanks to DP this is the maximal value
-}
-
+// This function collects the values the user entered, then calls the algorithm in the knapsack.js file and presents the result on this page
+/* Idea:
+Consider trying to build a knapsack of size W. The question to answer is, should item i be included in the knapsack or not. 
+Including item i should make a knapsack of higher value than all previous knapsacks of size W. 
+But, if the knapsack is already at size W, including item i will make the knapsack too large. So, the solution has to examine a knapsack of size W-wi. 
+Specifically, consider a knapsack of size W-wi that does not include item i. To decide if the item should be included in the knapsack, compare the values of the knapsack of size W that does not include the current item; and the value of a knapsack of size W-wi + the value of item i. 
+If the worth of the knapsack is increased by taking including the item, that item i will be included in the knapsack, and its overall value will be increased. (web.cs.ship.edu/~tbriggs)
+*/
 function solveKnapsack() {
-	// This function collects the values the user entered, then calls the algorithm in the knapsack.js file and presents the result on this page
-
-	var items = {
-		item1: {
-			Id: "milk",
-			Weight: 6,
-			Value: 30
-		},
-		item2: {
-			Id: "map",
-			Weight: 3,
-			Value: 14
-		},
-		item3: {
-			Id: "tv",
-			Weight: 4,
-			Value: 16
-		},
-		item4: {
-			Id: "sandwich",
-			Weight: 2,
-			Value: 9
-		},
-		item5: {
-			Id: "minion",
-			Weight: 5,
-			Value: 24
-		}
-	}
-
-
 	var prev = {};
 	var maxWeight = parseInt(document.getElementById("maxWeight").value);
-	var knapsackResult = getKnapsackResult(items, prev, maxWeight);
+	var knapsackResult = getKnapsackMaxVal(items, prev, maxWeight);
 	var selectedItems = getSelectedItems(maxWeight, prev);
 
 	console.log('Max Value = ' + knapsackResult + ' by packing:');
@@ -167,6 +116,41 @@ function solveKnapsack() {
 	document.getElementById("valueCounter").innerHTML = knapsackResult;
 	document.getElementById("weightCounter").innerHTML = "";
 }
+
+// Algorithm to solve unbound Knapsack, using DynamicProgramming
+function getKnapsackMaxVal(items, prev, maxWeight){
+	var K = new Array(maxWeight);
+
+	// Init array with zeros
+	$.each(K, function(i, e){
+		K[i] = 0
+	})
+
+	// Build LookupTable(/Array)
+	for (w = 1; w <= maxWeight; w++) {
+		var maxVal = 0; // (current) maximal value you get with capacity w
+
+		// Loop over all avaiable items
+		$.each(items, function(x, e){ 
+			var wi = e.Weight; // get weight and value of the current element e
+			var vi = e.Value;
+			
+			if (wi <= w) {
+				val = K[w - wi] + vi // the next (maybe maximal) value is the maxVal of the weight before the item + the value of the item itself
+				if (val > maxVal) {
+					maxVal = val;
+
+					prev[w] = e; // Save element e, which maximizes K[w-wi]+v
+				}
+			}
+		})
+		K[w] = maxVal;  // we save this element e, that maximizes K[w-wi]+vi for the current weight w
+		console.log(K);
+		console.log(prev);
+	}
+	return K[maxWeight] // return the last element of the array → thanks to DP this is the maximal value
+}
+
 
 function getSelectedItems(n, prev){
 	if (n == 0)
