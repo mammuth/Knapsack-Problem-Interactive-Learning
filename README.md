@@ -10,3 +10,6 @@ Done as part of a seminar at Technische Universität München.
 There is a demo hosted [here](http://maxi-muth.de/files/knapsack/), however probably it's not always up-to-date to this repo, because the mirror on maxi-muth.de just for demo purposes.
 
 Just clone the Repo and open the index.html file to check it out!
+
+### ToDo
+The solver is lagging support for bounded Knapsack Problem: [Issue #1](https://github.com/mammuth/Knapsack-Problem-Interactive-Learning/issues/1).
