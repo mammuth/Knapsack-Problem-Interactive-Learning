@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="css/normalize.css">
 	<link rel="stylesheet" href="css/skeleton.css">
 	<link rel="stylesheet" href="css/tabs.css">
+	<link rel="stylesheet" href="css/sweetalert.css">
 	<link rel="icon" type="image/png" href="images/favicon.png">
 
 
@@ -22,7 +23,7 @@
 			clear: both;
 			margin: 0 auto;
 		}
-		
+
 	</style>
 
 </head>
@@ -77,16 +78,16 @@
 			</div>
 
 
-		<!-- 
-		-- 
-		-- Right Column 
+		<!--
+		--
+		-- Right Column
 		--
 	-->
 	<div class="one-half column">
 
 		<ul class="tabs">
 			<li><a class="active" href="#interactive">Interactive Tool</a></li>
-			<li><a href="#Solver">Solver</a></li>		
+			<li><a href="#Solver">Solver</a></li>
 		</ul>
 
 		<!-- Tab Content -->
@@ -102,20 +103,20 @@
 			</li>
 			<!-- Ende interactive Tab -->
 
-					<!-- 
+					<!--
 					--
-					--Solver Tab 
+					--Solver Tab
 					-->
 				<li style="list-style-type: none;" id="Solver">
 
 					<div class="row">
 						<div class="one-half column">
 							<h4>max. copies:</h4>
-							<input id="maxCopies" type="number" name="maxWeight" value="1"></input>	
+							<input id="maxCopies" type="number" name="maxWeight" value="1"></input>
 						</div>
 						<div class="one-half column">
 							<br>(Choose 1 for 0-1 Knapsack, and any value c for the bounded Knapsack Problem)
-						</div>		
+						</div>
 					</div>
 					<br><button onclick="solveKnapsack()">Solve Knapsack Problem</button>
 				</li>
@@ -135,7 +136,7 @@
 
 
 
-<!-- 
+<!--
 -
 -
 -JavaScript
@@ -145,6 +146,7 @@
 <script src="js/jquery.js"></script>
 <script src="js/knapsack.js"></script>
 <script src="js/tabs.js"></script>
+<script src="js/sweetalert.min.js"></script>
 
 
 </html>
